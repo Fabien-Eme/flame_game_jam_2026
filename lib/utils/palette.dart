@@ -1,6 +1,9 @@
 import 'dart:ui';
 
 class Palette {
+  static const Color blue = Color.fromARGB(255, 36, 80, 225);
+  static const Color lightBlue = Color.fromARGB(255, 112, 162, 227);
+
   static const Color red = Color.fromARGB(255, 250, 40, 40);
   static const Color darkRed = Color.fromARGB(255, 147, 1, 1);
   static const Color redTransparent = Color.fromARGB(100, 250, 40, 40);

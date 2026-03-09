@@ -2,128 +2,72 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/events.dart';
-import 'package:flame/geometry.dart';
+import 'package:flame_game_jam_2026/game/component/bb_camera.dart';
+import 'package:flame_game_jam_2026/game/controller/player_movement_controller.dart';
 
-import '../../utils/palette.dart';
+import '../component/room.dart';
 import '../controller/custom_gamepad_controller.dart';
+import '../controller/ray_controller.dart';
 import '../game.dart';
 import '../snackbar/snackbar_controller.dart';
-import 'level.dart';
 import '../component/player.dart';
+import 'level_world.dart';
 
-class LevelWorld1 extends World
-    with HasGameReference<FGJ2026>, HasCollisionDetection, TapCallbacks {
+class LevelWorld1 extends LevelWorld with HasGameReference<FGJ2026>, HasCollisionDetection {
   late final SnackbarController snackBarController;
+  late final RayController rayController;
 
-  Ray2? ray;
-  Ray2? reflection;
-
-  Vector2? origin;
-  Vector2? tapOrigin;
-  bool isOriginCasted = false;
-  bool isTapOriginCasted = false;
-  final paint = Paint()
-    ..color = Color.fromARGB(98, 253, 252, 175)
-    ..strokeWidth = 2.0;
-  final tapPaint = Paint()
-    ..color = Palette.red
-    ..strokeWidth = 1.0;
-
-  static const numberOfRays = 100;
-  final List<Ray2> rays = [];
-  final List<Ray2> tapRays = [];
-  final List<RaycastResult<ShapeHitbox>> results = [];
-  final List<RaycastResult<ShapeHitbox>> tapResults = [];
+  late final PlayerMovementController playerMovementController;
 
   late final PlayerComponent player;
+
+  final List<BBCamera> bbCameras = [];
 
   @override
   FutureOr<void> onLoad() async {
     await parent!.mounted;
 
     await addAll([snackBarController = SnackbarController()]);
+    await add(player = PlayerComponent(position: Vector2.zero()));
 
-    final paint = Paint()
-      ..color = Palette.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
+    add(playerMovementController = PlayerMovementController(player: player));
+    add(CustomGamepadController(playerMovementController: playerMovementController, button1Pressed: button1Pressed));
+    add(rayController = RayController());
+
+    bbCameras.add(BBCamera(position: Vector2(200, 0), id: 0, maxDistance: 150, angleSpeed: 1.1, startAngle: pi / 4));
+    add(bbCameras.last);
+    rayController.addBBCamera(bbCameras.last);
+
+    bbCameras.add(BBCamera(position: Vector2(-100, 0), id: 1, maxDistance: 300, angleSpeed: 2, startAngle: -pi / 4));
+    add(bbCameras.last);
+    rayController.addBBCamera(bbCameras.last);
+    bbCameras.add(BBCamera(position: Vector2(0, 50), id: 2, maxDistance: 250));
+    add(bbCameras.last);
+    rayController.addBBCamera(bbCameras.last);
+
     add(ScreenHitbox());
 
-    add(
-      RectangleComponent(
-        position: Vector2.all(100),
-        anchor: Anchor.center,
-        size: Vector2.all(100),
-        paint: paint,
-        children: [RectangleHitbox()],
-      ),
-    );
+    rooms.add(Room(position: Vector2.all(100), size: Vector2(200, 100)));
+    add(rooms.last);
+    if (rooms.last.door != null) {
+      doors.add(rooms.last.door!);
+    }
 
-    add(player = PlayerComponent(position: Vector2.zero()));
-    add(CustomGamepadController(movePlayer: movePlayer));
+    rooms.add(Room(position: Vector2(-300, 0), size: Vector2(100, 100)));
+    add(rooms.last);
+    if (rooms.last.door != null) {
+      doors.add(rooms.last.door!);
+    }
 
     return super.onLoad();
   }
 
-  Vector2 direction = Vector2.zero();
-
-  void movePlayer(Vector2 direction) {
-    this.direction = direction;
-  }
-
-  double startAngle = 0;
-
-  @override
-  void update(double dt) {
-    startAngle += pi / 4 * dt;
-
-    if (player.isLoaded) {
-      final movement = direction * 250 * dt;
-
-      player.position.x += movement.x;
-      player.position.y += movement.y;
-
-      super.update(dt);
-
-      if (player.hitbox.isColliding) {
-        player.position.x -= movement.x * 1.1;
+  void button1Pressed() {
+    for (final door in doors) {
+      if (door.isSelected) {
+        door.toggleState();
       }
-
-      if (player.hitbox.isColliding) {
-        player.position.y -= movement.y * 1.1;
-      }
-    }
-
-    final origin =
-        (parent as Level).cameraComponent.viewport.globalToLocal(
-          game.mousePosition,
-        ) -
-        Vector2(FGJ2026.gameWidth / 2, FGJ2026.gameHeight / 2);
-    isOriginCasted = origin == this.origin;
-    this.origin = origin;
-
-    //if (!isOriginCasted || direction != Vector2.zero()) {
-    collisionDetection.raycastAll(
-      startAngle: startAngle,
-      sweepAngle: pi / 4,
-      origin,
-      numberOfRays: numberOfRays,
-      rays: rays,
-      out: results,
-    );
-    isOriginCasted = true;
-    //}
-    if (tapOrigin != null && !isTapOriginCasted) {
-      collisionDetection.raycastAll(
-        tapOrigin!,
-        numberOfRays: numberOfRays,
-        rays: tapRays,
-        out: tapResults,
-      );
-      isTapOriginCasted = true;
     }
   }
 
@@ -131,36 +75,6 @@ class LevelWorld1 extends World
   void render(Canvas canvas) {
     super.render(canvas);
 
-    if (origin != null) {
-      renderResult(canvas, origin!, results, paint, 250);
-    }
-    if (tapOrigin != null) {
-      renderResult(canvas, tapOrigin!, tapResults, tapPaint, 250);
-    }
-  }
-
-  void renderResult(
-    Canvas canvas,
-    Vector2 origin,
-    List<RaycastResult<ShapeHitbox>> results,
-    Paint paint,
-    double maxDistance,
-  ) {
-    final originOffset = origin.toOffset();
-    for (final result in results) {
-      if (!result.isActive || result.intersectionPoint == null) {
-        continue;
-      }
-
-      final delta = result.intersectionPoint!.clone()..sub(origin);
-
-      if (delta.length > maxDistance) {
-        delta.scaleTo(maxDistance);
-      }
-
-      final endPoint = origin.clone()..add(delta);
-
-      canvas.drawLine(originOffset, endPoint.toOffset(), paint);
-    }
+    rayController.renderAllRays(canvas);
   }
 }

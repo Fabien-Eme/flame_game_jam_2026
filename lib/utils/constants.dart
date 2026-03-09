@@ -1,0 +1,1 @@
+enum WallOrientation { horizontal, vertical }

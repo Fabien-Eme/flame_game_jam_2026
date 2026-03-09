@@ -6,32 +6,23 @@ import 'package:flame/components.dart';
 
 import '../../utils/palette.dart';
 
-class PlayerComponent extends PositionComponent{
+class PlayerComponent extends PositionComponent {
+  PlayerComponent({required super.position, super.key});
 
+  late final CircleHitbox hitbox;
 
-  PlayerComponent({required super.position,super.key});
+  @override
+  Future<void> onLoad() async {
+    anchor = Anchor.center;
 
-late final CircleHitbox hitbox;
+    final paint = Paint()
+      ..color = Palette.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
 
-        @override
-        Future<void> onLoad() async {
-          await parent!.mounted;
-          anchor = Anchor.center;
+    hitbox = CircleHitbox();
 
-          final paint = Paint()
-            ..color = Palette.white
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 2.0;
-
-          hitbox = CircleHitbox();
-
-          add(CircleComponent(
-            position: Vector2.zero(),
-            anchor: Anchor.center,
-            radius: 12.5,
-            paint: paint,
-            children: [hitbox],
-          ));
-          return super.onLoad();
-        }
-      }
+    add(CircleComponent(position: Vector2.zero(), anchor: Anchor.center, radius: 12.5, paint: paint, children: [hitbox]));
+    return super.onLoad();
+  }
+}

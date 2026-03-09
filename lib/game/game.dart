@@ -5,7 +5,6 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
-import 'package:gamepads/gamepads.dart';
 
 import '../utils/game_assets.dart';
 import '../utils/palette.dart';
