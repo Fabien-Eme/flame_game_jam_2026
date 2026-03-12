@@ -24,6 +24,7 @@ class BBCamera extends PositionComponent with HasWorldReference<LevelWorld> {
   final void Function(BBCamera camera)? keyCardTriggerFunction;
   Color? removeOnKeyCardTriggerColor;
   late final int numberOfRays;
+  double? angleCovered;
 
   BBCamera({
     required super.position,
@@ -32,6 +33,7 @@ class BBCamera extends PositionComponent with HasWorldReference<LevelWorld> {
     this.angleSpeed = 1,
     this.isRotating = false,
     this.rotationAmplitude = pi / 4,
+    this.angleCovered,
     this.isGoingClockwise = true,
     this.isMoving = false,
     this.isMovingVertically = false,
@@ -56,8 +58,8 @@ class BBCamera extends PositionComponent with HasWorldReference<LevelWorld> {
     initialAngle = startAngle;
     initialPosition = position.clone();
 
-    numberOfRays = (52 * (maxDistance / 250) * (rotationAmplitude / (pi / 4))).round();
-    print(numberOfRays);
+    angleCovered ??= rotationAmplitude;
+    numberOfRays = max(15, (52 * (maxDistance / 250) * (angleCovered! / (pi / 4))).round());
   }
 
   void keyCardTrigger(Color color) {
@@ -76,6 +78,7 @@ class BBCamera extends PositionComponent with HasWorldReference<LevelWorld> {
 
   @override
   void update(double dt) {
+    if (world.isPaused) return;
     if (isRotating) {
       if (isGoingClockwise) {
         startAngle += pi / 4 * angleSpeed * dt;

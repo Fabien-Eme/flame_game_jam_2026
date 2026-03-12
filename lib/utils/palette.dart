@@ -25,6 +25,7 @@ class Palette {
   static const Color yellow = Color.fromARGB(255, 255, 234, 0);
   static const Color yellowTransparent = Color.fromARGB(100, 255, 234, 0);
   static const Color darkYellow = Color.fromARGB(255, 206, 172, 0);
+  static const Color orange = Color.fromARGB(255, 255, 100, 0);
 
   static const Color shaderBlue = Color.fromARGB(255, 112, 162, 227);
   static const Color shaderdarkBlue = Color.fromARGB(255, 36, 80, 225);

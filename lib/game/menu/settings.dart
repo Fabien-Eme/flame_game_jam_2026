@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/input.dart';
 import 'package:flame_game_jam_2026/game/game.dart';
+import 'package:flame_game_jam_2026/game/level/post_process.dart';
 import 'package:flame_game_jam_2026/utils/palette.dart';
 import 'package:flutter/rendering.dart';
 
@@ -29,6 +30,8 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
     add(world);
 
     add(cameraComponent = CameraComponent.withFixedResolution(width: FGJ2026.gameWidth, height: FGJ2026.gameHeight, world: world));
+    cameraComponent.postProcess = CRTPostProcess();
+
     world.add(
       RectangleComponent.fromRect(
         Rect.fromLTWH(-FGJ2026.gameWidth / 2, -FGJ2026.gameHeight / 2, FGJ2026.gameWidth, FGJ2026.gameHeight),

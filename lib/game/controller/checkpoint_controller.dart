@@ -16,11 +16,11 @@ class CheckpointController extends Component with HasGameReference<FGJ2026> {
   }
 
   Future<int> getCurrentCheckpointInMemory() async {
-    // this.currentCheckpoint = 3;
-    // return this.currentCheckpoint;
+    final asyncPrefs = SharedPreferencesAsync();
 
     //TODO Remove Debug
-    final asyncPrefs = SharedPreferencesAsync();
+    await asyncPrefs.setInt('currentCheckpoint', 6);
+
     final currentCheckpoint = await asyncPrefs.getInt('currentCheckpoint');
     this.currentCheckpoint = currentCheckpoint ?? 0;
     return this.currentCheckpoint;
@@ -52,7 +52,7 @@ class CheckpointController extends Component with HasGameReference<FGJ2026> {
 
   void markCheckpointAlreadyReached(LevelWorld levelWorld) {
     for (var checkPoint in levelWorld.checkPoints) {
-      if (checkPoint.id == currentCheckpoint) {
+      if (checkPoint.id <= currentCheckpoint) {
         checkPoint.markAsAlreadyReached();
       }
     }

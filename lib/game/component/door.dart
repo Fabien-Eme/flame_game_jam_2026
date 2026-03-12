@@ -7,8 +7,9 @@ import 'package:flame/components.dart';
 import '../../utils/constants.dart';
 import '../../utils/palette.dart';
 import '../game.dart';
+import '../level/level_world.dart';
 
-class Door extends PositionComponent with HasGameReference<FGJ2026> {
+class Door extends PositionComponent with HasGameReference<FGJ2026>, HasWorldReference<LevelWorld> {
   Door({required super.position, required this.orientation, required this.length, required this.thickness, required this.color, super.key});
 
   final WallOrientation orientation;
@@ -24,6 +25,8 @@ class Door extends PositionComponent with HasGameReference<FGJ2026> {
 
   bool isSelected = false;
 
+  late final RectangleHitbox hitbox;
+
   Vector2 centerPosition = Vector2.zero();
 
   @override
@@ -37,7 +40,7 @@ class Door extends PositionComponent with HasGameReference<FGJ2026> {
         position: Vector2.zero(),
         size: Vector2(orientation == WallOrientation.horizontal ? length : thickness, orientation == WallOrientation.vertical ? length : thickness),
         paint: paint,
-        children: [RectangleHitbox(collisionType: CollisionType.passive)],
+        children: [hitbox = RectangleHitbox(collisionType: CollisionType.passive)],
       ),
     );
 
@@ -74,6 +77,7 @@ class Door extends PositionComponent with HasGameReference<FGJ2026> {
     if (!isOpen) {
       game.audioController.playDoorSound();
       isOpening = true;
+      hitbox.collisionType = CollisionType.inactive;
     }
   }
 
@@ -81,6 +85,7 @@ class Door extends PositionComponent with HasGameReference<FGJ2026> {
     if (isOpen) {
       game.audioController.playDoorSound();
       isClosing = true;
+      hitbox.collisionType = CollisionType.inactive;
     }
   }
 
@@ -110,14 +115,35 @@ class Door extends PositionComponent with HasGameReference<FGJ2026> {
     paint.color = color;
   }
 
+  bool isCollidingDuringOpeningOrClosing = false;
+
   @override
   void update(double dt) {
+    if (isCollidingDuringOpeningOrClosing) {
+      hitbox.collisionType = CollisionType.passive;
+      world.collisionDetection.run();
+      if (!world.player.hitbox.isColliding) {
+        isCollidingDuringOpeningOrClosing = false;
+      } else {
+        hitbox.collisionType = CollisionType.inactive;
+      }
+    }
     if (isOpening) {
       angle += pi / 2 * 2 * dt;
       if (angle >= pi / 2) {
         angle = pi / 2;
         isOpening = false;
         isOpen = true;
+        hitbox.collisionType = CollisionType.passive;
+
+        world.collisionDetection.run();
+
+        if (world.player.hitbox.isColliding) {
+          isCollidingDuringOpeningOrClosing = true;
+          hitbox.collisionType = CollisionType.inactive;
+        } else {
+          hitbox.collisionType = CollisionType.passive;
+        }
         computeCenter();
       }
     }
@@ -127,6 +153,16 @@ class Door extends PositionComponent with HasGameReference<FGJ2026> {
         angle = 0;
         isClosing = false;
         isOpen = false;
+        hitbox.collisionType = CollisionType.passive;
+
+        world.collisionDetection.run();
+
+        if (world.player.hitbox.isColliding) {
+          isCollidingDuringOpeningOrClosing = true;
+          hitbox.collisionType = CollisionType.inactive;
+        } else {
+          hitbox.collisionType = CollisionType.passive;
+        }
         computeCenter();
       }
     }

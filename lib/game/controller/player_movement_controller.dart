@@ -57,7 +57,7 @@ class PlayerMovementController extends Component with HasWorldReference<LevelWor
     player.position.x += movement.x;
 
     ///force colision check
-    (world as HasCollisionDetection).collisionDetection.run();
+    world.collisionDetection.run();
 
     ///if the player is colliding, undo the horizontal movement
     if (player.hitbox.isColliding) {
@@ -69,7 +69,7 @@ class PlayerMovementController extends Component with HasWorldReference<LevelWor
     player.position.y += movement.y;
 
     ///force colision check
-    (world as HasCollisionDetection).collisionDetection.run();
+    world.collisionDetection.run();
 
     ///if the player is colliding, undo the vertical movement
     if (player.hitbox.isColliding) {
@@ -77,15 +77,15 @@ class PlayerMovementController extends Component with HasWorldReference<LevelWor
       isMovingYPossible = false;
     }
 
-    if (isMovingXPossible) {
-      if (isMovingYPossible) {
-        cameraComponent.viewfinder.position += movement;
-      } else {
-        cameraComponent.viewfinder.position += Vector2(movement.x, 0);
-      }
-    } else if (isMovingYPossible) {
-      cameraComponent.viewfinder.position += Vector2(0, movement.y);
-    }
+    // if (isMovingXPossible) {
+    //   if (isMovingYPossible) {
+    //     cameraComponent.viewfinder.position += movement;
+    //   } else {
+    //     cameraComponent.viewfinder.position += Vector2(movement.x, 0);
+    //   }
+    // } else if (isMovingYPossible) {
+    //   cameraComponent.viewfinder.position += Vector2(0, movement.y);
+    // }
 
     /// Doors
     refreshNearestDoor();

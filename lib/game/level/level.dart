@@ -8,6 +8,7 @@ import '../../utils/debug_pointer.dart';
 import '../../utils/palette.dart';
 import '../game.dart';
 import 'level_world.dart';
+import 'post_process.dart';
 
 class Level extends PositionComponent with HasGameReference<FGJ2026>, PointerMoveCallbacks, TapCallbacks {
   Level({super.key, this.speedRunMode = false, this.newGame = false});
@@ -36,6 +37,8 @@ class Level extends PositionComponent with HasGameReference<FGJ2026>, PointerMov
     await cameraComponent.viewport.add(debugPointer = DebugPointer(position: Vector2.zero()));
 
     add(levelWorld);
+
+    cameraComponent.postProcess = CRTPostProcess();
 
     return super.onLoad();
   }

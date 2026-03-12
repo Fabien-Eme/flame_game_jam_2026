@@ -53,7 +53,7 @@ class RayController extends Component with HasGameReference<FGJ2026>, HasWorldRe
 
       world.collisionDetection.raycastAll(
         startAngle: bbCamera.startAngle,
-        sweepAngle: bbCamera.rotationAmplitude,
+        sweepAngle: bbCamera.angleCovered!,
         bbCamera.position,
         numberOfRays: bbCamera.numberOfRays,
         rays: rays,

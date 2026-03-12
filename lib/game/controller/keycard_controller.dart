@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/palette.dart';
 import '../component/key_card_hud.dart';
+import '../level/level3_initialization.dart';
 import '../level/level_world.dart';
 import '../game.dart';
 
@@ -37,6 +38,10 @@ class KeycardController extends Component with HasGameReference<FGJ2026> {
 
   Future<List<Color>> getKeyCardsInMemory([KeyCardHUD? keyCardHUD]) async {
     final asyncPrefs = SharedPreferencesAsync();
+
+    //TODO Remove Debug
+    await asyncPrefs.setStringList('keyCardsOwnedString', ['lightBlue', 'red', 'darkYellow', 'orange']);
+
     final keyCardsOwnedString = await asyncPrefs.getStringList('keyCardsOwnedString');
     this.keyCardsOwnedString = keyCardsOwnedString ?? [];
 
@@ -51,6 +56,9 @@ class KeycardController extends Component with HasGameReference<FGJ2026> {
         }
         if (keyCard == 'darkYellow') {
           keyCardsOwned.add(Palette.darkYellow);
+        }
+        if (keyCard == 'orange') {
+          keyCardsOwned.add(Palette.orange);
         }
       }
     }
@@ -75,6 +83,9 @@ class KeycardController extends Component with HasGameReference<FGJ2026> {
       }
       if (keyCard == Palette.darkYellow) {
         keyCardsOwnedString.add('darkYellow');
+      }
+      if (keyCard == Palette.orange) {
+        keyCardsOwnedString.add('orange');
       }
     }
     asyncPrefs.setStringList('keyCardsOwnedString', keyCardsOwnedString);

@@ -1,0 +1,73 @@
+import 'dart:math';
+import 'package:flame/components.dart';
+import '../../game/component/bb_camera.dart';
+import '../../game/component/room.dart';
+import '../../game/component/wall.dart';
+import '../../game/level/level_world.dart';
+import '../../game/game.dart';
+import '../../utils/constants.dart';
+import '../../utils/palette.dart';
+import '../../game/component/key_card.dart';
+import '../component/check_point.dart';
+import '../component/door.dart';
+import 'dart:ui';
+
+Future<void> level3Initialization(LevelWorld levelWorld, List<Color> keyCardsOwned) async {
+  if (!keyCardsOwned.contains(Palette.orange)) return;
+  await levelWorld.addBBCameras([
+    BBCamera(
+      position: Vector2(1145, 108),
+      maxDistance: 250,
+      isRotating: true,
+      startAngle: 3 * pi / 4,
+      angleCovered: pi / 4,
+      rotationAmplitude: pi,
+      angleSpeed: 3,
+    ),
+    BBCamera(
+      position: Vector2(1120, 545),
+      maxDistance: 250,
+      isRotating: true,
+      startAngle: -3 * pi / 4,
+      angleCovered: pi / 4,
+      rotationAmplitude: pi,
+      angleSpeed: 2.5,
+    ),
+    BBCamera(
+      position: Vector2(1292, 425),
+      maxDistance: 150,
+      isRotating: true,
+      startAngle: -pi,
+      angleCovered: pi / 4,
+      rotationAmplitude: pi,
+      angleSpeed: 2.75,
+    ),
+    BBCamera(
+      position: Vector2(1292, 275),
+      maxDistance: 150,
+      isRotating: true,
+      startAngle: -pi,
+      angleCovered: pi / 4,
+      rotationAmplitude: pi,
+      angleSpeed: 2.6,
+    ),
+  ]);
+
+  await levelWorld.addRooms([]);
+
+  await levelWorld.addWalls([
+    Wall(position: Vector2(1125, 550), orientation: WallOrientation.horizontal, length: 175),
+    Wall(position: Vector2(1125, 550), orientation: WallOrientation.vertical, length: 150),
+    Wall(position: Vector2(1150, 0), orientation: WallOrientation.vertical, length: 100),
+    Wall(position: Vector2(1150, 100), orientation: WallOrientation.horizontal, length: 150),
+  ]);
+
+  await levelWorld.addDoors([]);
+
+  await levelWorld.addKeyCards(
+    [
+
+    ]);
+
+  await levelWorld.addCheckPoints([CheckPoint(position: Vector2(875, 675), id: 6)]);
+}

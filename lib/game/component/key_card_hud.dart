@@ -30,7 +30,7 @@ class KeyCardHUD extends PositionComponent with HasWorldReference<LevelWorld> {
     add(
       RectangleComponent(
         anchor: Anchor.center,
-        position: Vector2(keyCards.length * 20 + 10, 60),
+        position: Vector2(keyCards.length * 20 + 12.5, 60),
         size: Vector2(10, 20),
         paint: Paint()..color = color,
       ),

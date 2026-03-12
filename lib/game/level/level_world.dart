@@ -21,6 +21,7 @@ import '../menu/menu_in_game.dart';
 import 'level.dart';
 import 'level1_initialization.dart';
 import 'level2_initialization.dart';
+import 'level3_initialization.dart';
 
 class LevelWorld extends World with HasGameReference<FGJ2026>, HasCollisionDetection {
   LevelWorld({super.key});
@@ -68,25 +69,27 @@ class LevelWorld extends World with HasGameReference<FGJ2026>, HasCollisionDetec
 
     await level1Initialization(this, keyCardsOwned);
     await level2Initialization(this, keyCardsOwned);
+    await level3Initialization(this, keyCardsOwned);
 
-    (parent as Level).cameraComponent.viewport.add(keyCardHUD = KeyCardHUD(position: Vector2(FGJ2026.gameWidth - 150, FGJ2026.gameHeight - 125)));
-    (parent as Level).cameraComponent.viewport.add(MenuInGame(position: Vector2(FGJ2026.gameWidth - 120, 20)));
+    await add(keyCardHUD = KeyCardHUD(position: Vector2(FGJ2026.gameWidth - 150, FGJ2026.gameHeight - 125)));
+    await add(MenuInGame(position: Vector2(FGJ2026.gameWidth - 125, 25)));
 
     if ((parent! as Level).newGame) {
       game.checkpointController.resetCheckpoint();
     }
+
+    game.keycardController.removeKeyCardAlreadyCollected(this);
+    game.checkpointController.markCheckpointAlreadyReached(this);
 
     if (game.checkpointController.currentCheckpoint == 0 || (parent! as Level).speedRunMode || (parent! as Level).newGame) {
       player.position = initialPlayerPosition;
     } else {
       player.position = game.checkpointController.getCurrentCheckpointPosition(checkPoints);
       await game.keycardController.getKeyCardsInMemory(keyCardHUD);
-
-      game.keycardController.removeKeyCardAlreadyCollected(this);
-      game.checkpointController.markCheckpointAlreadyReached(this);
     }
 
-    // (parent! as Level).cameraComponent.viewfinder.position = player.position - Vector2(FGJ2026.gameWidth / 2, FGJ2026.gameHeight / 2);
+    //(parent! as Level).cameraComponent.viewfinder.position = player.position - Vector2(FGJ2026.gameWidth / 2, FGJ2026.gameHeight / 2);
+
     return super.onLoad();
   }
 

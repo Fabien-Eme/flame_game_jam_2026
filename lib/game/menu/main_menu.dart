@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 
 import '../../utils/palette.dart';
 import '../game.dart';
+import '../level/post_process.dart';
 import 'menu_entry.dart';
 
 class MainMenu extends PositionComponent with HasGameReference<FGJ2026> {
@@ -21,6 +22,7 @@ class MainMenu extends PositionComponent with HasGameReference<FGJ2026> {
     add(world);
 
     add(cameraComponent = CameraComponent.withFixedResolution(width: FGJ2026.gameWidth, height: FGJ2026.gameHeight, world: world));
+    cameraComponent.postProcess = CRTPostProcess();
 
     world.add(
       RectangleComponent.fromRect(

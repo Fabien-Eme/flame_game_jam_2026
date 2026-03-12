@@ -80,10 +80,16 @@ Future<void> level1Initialization(LevelWorld levelWorld, List<Color> keyCardsOwn
   }
 
   await levelWorld.addRooms([
-    Room(position: Vector2(0, 0), size: Vector2(FGJ2026.gameWidth, FGJ2026.gameHeight - 3), color: Palette.lightBlue),
+    Room(
+      position: Vector2(0, 0),
+      size: Vector2(FGJ2026.gameWidth, FGJ2026.gameHeight - 3),
+      doorPlacement: DoorPlacement.right,
+      color: Palette.orange,
+    ),
     Room(position: Vector2(0, 0), size: Vector2(100, 200), doorPlacement: DoorPlacement.bottom, color: Palette.lightBlue),
     Room(position: Vector2(100 - 3, 0), size: Vector2(200, 100), doorPlacement: DoorPlacement.right, color: Palette.lightBlue),
     Room(position: Vector2(650, 0), size: Vector2(100, 150), doorPlacement: DoorPlacement.bottom, color: Palette.lightBlue),
+    Room(position: Vector2(425, 600 - 3), size: Vector2(100, 100), doorPlacement: DoorPlacement.top, color: Palette.darkYellow),
   ]);
 
   await levelWorld.addWalls([
@@ -108,10 +114,11 @@ Future<void> level1Initialization(LevelWorld levelWorld, List<Color> keyCardsOwn
     KeyCard(position: Vector2(700, 70), color: Palette.red),
     KeyCard(position: Vector2(50, 650), color: Palette.darkYellow),
   ]);
+
   await levelWorld.addCheckPoints([
     CheckPoint(position: Vector2(150, 50), id: 1),
     CheckPoint(position: Vector2(700, 35), id: 2),
     CheckPoint(position: Vector2(230, 430), id: 3),
-    CheckPoint(position: Vector2(460, 430), id: 4),
+    CheckPoint(position: Vector2(475, 650), id: 4),
   ]);
 }

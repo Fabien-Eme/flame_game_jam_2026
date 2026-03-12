@@ -4,6 +4,7 @@ import 'dart:ui';
 import '../../utils/palette.dart';
 import '../game.dart';
 import '../level/level2_initialization.dart';
+import '../level/level3_initialization.dart';
 import '../level/level_world.dart';
 import 'bb_camera.dart';
 
@@ -51,6 +52,9 @@ class KeyCard extends PositionComponent with HasWorldReference<LevelWorld>, HasG
 
     if (color == Palette.darkYellow) {
       level2Initialization(world, game.keycardController.keyCardsOwned);
+    }
+    if (color == Palette.orange) {
+      level3Initialization(world, game.keycardController.keyCardsOwned);
     }
     removeFromParent();
   }
