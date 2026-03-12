@@ -4,6 +4,8 @@ import 'package:flame/game.dart';
 import '../level/level.dart';
 import '../menu/main_menu.dart' show MainMenu;
 import '../menu/root.dart';
+import '../menu/loading_screen.dart';
+import '../menu/settings.dart';
 import 'route_can_ignore_events.dart';
 
 class GameRouter extends RouterComponent {
@@ -15,10 +17,16 @@ class GameRouter extends RouterComponent {
 
           ///
           'mainMenu': RouteCanIgnoreEvents(MainMenu.new, transparent: true),
-          //'menuSettings': RouteMakeOtherIgnoreEvents(MenuSettings.new, transparent: true),
+          'settings': RouteCanIgnoreEvents(Settings.new, transparent: true),
 
           ///
-          'level1': RouteCanIgnoreEvents(() => Level(key: ComponentKey.named('level'), currentLevel: 1)),
+          'level': RouteCanIgnoreEvents(() => Level(key: ComponentKey.named('level'))),
+          'speedRunMode': RouteCanIgnoreEvents(() => Level(key: ComponentKey.named('level'), speedRunMode: true)),
+          'newGame': RouteCanIgnoreEvents(() => Level(key: ComponentKey.named('level'), newGame: true)),
+
+          ///
+          'loading': RouteCanIgnoreEvents(() => LoadingScreen(key: ComponentKey.named('loading'))),
+          'loadingSpeedRunMode': RouteCanIgnoreEvents(() => LoadingScreen(key: ComponentKey.named('loadingSpeedRunMode'), isSpeedRunMode: true)),
         },
       );
 }

@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:gamepads/gamepads.dart';
 
+import '../level/level_world.dart';
 import 'player_movement_controller.dart';
 
-class CustomGamepadController extends Component with HasWorldReference {
-  final Function() button1Pressed;
-
+class CustomGamepadController extends Component with HasWorldReference<LevelWorld> {
   late final PlayerMovementController playerMovementController;
 
   final double deadzone;
@@ -30,7 +29,6 @@ class CustomGamepadController extends Component with HasWorldReference {
     this.centerX = 29400.0,
     this.centerY = 33006.0,
     this.invertY = false,
-    required this.button1Pressed,
   }) : _rawX = centerX,
        _rawY = centerY;
 
@@ -60,6 +58,14 @@ class CustomGamepadController extends Component with HasWorldReference {
       case 'button-1':
         if (event.value == 1) {
           button1Pressed();
+        } else {}
+        break;
+
+      case 'button-0':
+        if (event.value == 1) {
+          button0Pressed();
+        } else {
+          button0Released();
         }
         break;
 
@@ -70,6 +76,7 @@ class CustomGamepadController extends Component with HasWorldReference {
   }
 
   void _emitMove() {
+    if (world.isPaused) return;
     final x = _normalizeAxis(value: _rawX, center: centerX, min: min, max: max);
 
     double y = _normalizeAxis(value: _rawY, center: centerY, min: min, max: max);
@@ -105,6 +112,33 @@ class CustomGamepadController extends Component with HasWorldReference {
       return ((value - center) / negativeRange).clamp(-1.0, 0.0);
     }
   }
+
+  void button0Pressed() {
+    world.bustedController.tryToDebust();
+    if (world.isPaused) return;
+    playerMovementController.run();
+  }
+
+  void button0Released() {
+    playerMovementController.walk();
+  }
+
+  void button1Pressed() {
+    world.bustedController.tryToDebust();
+    if (world.isPaused) return;
+    for (final door in world.doors) {
+      if (door.isSelected) {
+        door.toggleState();
+      }
+    }
+    for (final keyCard in world.keyCards) {
+      if (keyCard.isSelected) {
+        keyCard.pickUp();
+      }
+    }
+  }
+
+  void button1Released() {}
 
   @override
   void onRemove() {

@@ -12,6 +12,8 @@ dependencies:
 
   flame: ^1.35.1
   gamepads: ^0.1.9
+  flutter_soloud: ^3.5.0
+  shared_preferences: ^2.5.4
 
 
 dev_dependencies:

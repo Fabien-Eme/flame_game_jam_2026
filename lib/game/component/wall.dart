@@ -7,7 +7,7 @@ import '../../utils/constants.dart';
 import '../../utils/palette.dart';
 
 class Wall extends PositionComponent {
-  Wall({required super.position, required this.orientation, required this.length, required this.thickness, super.key});
+  Wall({required super.position, required this.orientation, required this.length, this.thickness = 3, super.key});
 
   final WallOrientation orientation;
   final double length;

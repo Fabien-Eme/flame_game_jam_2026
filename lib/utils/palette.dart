@@ -2,7 +2,7 @@ import 'dart:ui';
 
 class Palette {
   static const Color blue = Color.fromARGB(255, 36, 80, 225);
-  static const Color lightBlue = Color.fromARGB(255, 112, 162, 227);
+  static const Color lightBlue = Color.fromARGB(255, 123, 180, 255);
 
   static const Color red = Color.fromARGB(255, 250, 40, 40);
   static const Color darkRed = Color.fromARGB(255, 147, 1, 1);
@@ -13,12 +13,13 @@ class Palette {
   static const Color black = Color.fromARGB(255, 37, 37, 37);
   static const Color trueBlack = Color.fromARGB(255, 0, 0, 0);
   static const Color darkGrey = Color.fromARGB(255, 124, 124, 124);
+  static const Color veryDarkGrey = Color.fromARGB(255, 66, 66, 66);
   static const Color grey = Color.fromARGB(255, 183, 183, 183);
   static const Color backGroundMenu = Color.fromARGB(0, 0, 0, 0);
   static const Color white = Color.fromARGB(255, 255, 255, 255);
   static const Color whiteTransparent = Color.fromARGB(200, 255, 255, 255);
   static const Color whiteVeryTransparent = Color.fromARGB(50, 255, 255, 255);
-  static const Color darkBlue = Color.fromARGB(255, 36, 80, 225);
+  static const Color darkBlue = Color.fromARGB(255, 14, 49, 165);
   static const Color blackTransparent = Color.fromARGB(75, 0, 0, 0);
   static const Color blackAlmostOpaque = Color.fromARGB(200, 0, 0, 0);
   static const Color yellow = Color.fromARGB(255, 255, 234, 0);

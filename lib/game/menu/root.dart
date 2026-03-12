@@ -6,6 +6,9 @@ class Root extends Component with HasGameReference<FGJ2026> {
   @override
   void onLoad() {
     super.onLoad();
-    game.router.pushNamed('level1');
+
+    game.router.pushNamed('level');
+    // game.router.pushNamed('mainMenu');
+    // game.router.pushNamed('settings');
   }
 }

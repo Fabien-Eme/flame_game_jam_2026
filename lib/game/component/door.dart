@@ -6,14 +6,17 @@ import 'package:flame/components.dart';
 
 import '../../utils/constants.dart';
 import '../../utils/palette.dart';
+import '../game.dart';
 
-class Door extends PositionComponent {
-  Door({required super.position, required this.orientation, required this.length, required this.thickness, super.key});
+class Door extends PositionComponent with HasGameReference<FGJ2026> {
+  Door({required super.position, required this.orientation, required this.length, required this.thickness, required this.color, super.key});
 
   final WallOrientation orientation;
   final double length;
   final double thickness;
-  final Paint paint = Paint()..color = Palette.blue;
+  final Color color;
+
+  late final Paint paint;
 
   bool isOpen = false;
   bool isOpening = false;
@@ -26,6 +29,8 @@ class Door extends PositionComponent {
   @override
   void onLoad() {
     super.onLoad();
+
+    paint = Paint()..color = color;
 
     add(
       RectangleComponent(
@@ -54,21 +59,27 @@ class Door extends PositionComponent {
         offsetDueToStateAndOrientation.y = length / 2;
       } else {
         offsetDueToStateAndOrientation.y = 0;
-        offsetDueToStateAndOrientation.x = length / 2;
+        offsetDueToStateAndOrientation.x = -length / 2;
       }
     }
 
-    centerPosition = (parent as PositionComponent).position + position + offsetDueToStateAndOrientation;
+    if (parent is PositionComponent) {
+      centerPosition = (parent as PositionComponent).position + position + offsetDueToStateAndOrientation;
+    } else {
+      centerPosition = position + offsetDueToStateAndOrientation;
+    }
   }
 
   void open() {
     if (!isOpen) {
+      game.audioController.playDoorSound();
       isOpening = true;
     }
   }
 
   void close() {
     if (isOpen) {
+      game.audioController.playDoorSound();
       isClosing = true;
     }
   }
@@ -96,7 +107,7 @@ class Door extends PositionComponent {
 
   void deselect() {
     isSelected = false;
-    paint.color = Palette.blue;
+    paint.color = color;
   }
 
   @override

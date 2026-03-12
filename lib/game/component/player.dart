@@ -13,12 +13,10 @@ class PlayerComponent extends PositionComponent {
 
   @override
   Future<void> onLoad() async {
+    priority = 999;
     anchor = Anchor.center;
 
-    final paint = Paint()
-      ..color = Palette.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
+    final paint = Paint()..color = Palette.white;
 
     hitbox = CircleHitbox();
 
