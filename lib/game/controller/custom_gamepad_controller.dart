@@ -97,7 +97,6 @@ class CustomGamepadController extends Component with HasWorldReference<LevelWorl
     if (direction.length > 1) {
       direction.normalize();
     }
-
     playerMovementController.movePlayer(direction);
   }
 
@@ -115,6 +114,8 @@ class CustomGamepadController extends Component with HasWorldReference<LevelWorl
 
   void button0Pressed() {
     world.bustedController.tryToDebust();
+    world.victoryController.tryToQuit();
+    world.welcomeController.tryToQuit();
     if (world.isPaused) return;
     playerMovementController.run();
   }
@@ -125,6 +126,8 @@ class CustomGamepadController extends Component with HasWorldReference<LevelWorl
 
   void button1Pressed() {
     world.bustedController.tryToDebust();
+    world.victoryController.tryToQuit();
+    world.welcomeController.tryToQuit();
     if (world.isPaused) return;
     for (final door in world.doors) {
       if (door.isSelected) {

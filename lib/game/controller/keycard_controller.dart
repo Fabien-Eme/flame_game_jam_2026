@@ -39,9 +39,6 @@ class KeycardController extends Component with HasGameReference<FGJ2026> {
   Future<List<Color>> getKeyCardsInMemory([KeyCardHUD? keyCardHUD]) async {
     final asyncPrefs = SharedPreferencesAsync();
 
-    //TODO Remove Debug
-    await asyncPrefs.setStringList('keyCardsOwnedString', ['lightBlue', 'red', 'darkYellow', 'orange']);
-
     final keyCardsOwnedString = await asyncPrefs.getStringList('keyCardsOwnedString');
     this.keyCardsOwnedString = keyCardsOwnedString ?? [];
 

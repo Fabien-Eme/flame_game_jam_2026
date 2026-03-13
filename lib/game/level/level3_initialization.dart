@@ -8,6 +8,7 @@ import '../../game/game.dart';
 import '../../utils/constants.dart';
 import '../../utils/palette.dart';
 import '../../game/component/key_card.dart';
+import '../component/arrow.dart';
 import '../component/check_point.dart';
 import '../component/door.dart';
 import 'dart:ui';
@@ -53,6 +54,8 @@ Future<void> level3Initialization(LevelWorld levelWorld, List<Color> keyCardsOwn
     ),
   ]);
 
+  await levelWorld.addArrow(Arrow(position: Vector2(1250, 332.5), color: Palette.orange));
+
   await levelWorld.addRooms([]);
 
   await levelWorld.addWalls([
@@ -60,6 +63,7 @@ Future<void> level3Initialization(LevelWorld levelWorld, List<Color> keyCardsOwn
     Wall(position: Vector2(1125, 550), orientation: WallOrientation.vertical, length: 150),
     Wall(position: Vector2(1150, 0), orientation: WallOrientation.vertical, length: 100),
     Wall(position: Vector2(1150, 100), orientation: WallOrientation.horizontal, length: 150),
+    Wall(position: Vector2(850, 100), orientation: WallOrientation.horizontal, length: 300),
   ]);
 
   await levelWorld.addDoors([]);

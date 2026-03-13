@@ -8,6 +8,7 @@ import '../../game/game.dart';
 import '../../utils/constants.dart';
 import '../../utils/palette.dart';
 import '../../game/component/key_card.dart';
+import '../component/arrow.dart';
 import '../component/check_point.dart';
 import '../component/door.dart';
 import 'dart:ui';
@@ -92,10 +93,12 @@ Future<void> level2Initialization(LevelWorld levelWorld, List<Color> keyCardsOwn
         removeOnKeyCardTriggerColor: Palette.orange,
       ),
     ]);
+    await levelWorld.addArrow(Arrow(position: Vector2(800, 665.5), color: Palette.orange));
   }
 
   await levelWorld.addRooms([
     Room(position: Vector2(650, 400), size: Vector2(100, 100), doorPlacement: DoorPlacement.bottom, color: Palette.darkYellow),
+    Room(position: Vector2(425, 600 - 3), size: Vector2(100, 100), doorPlacement: DoorPlacement.top, color: Palette.darkYellow),
   ]);
 
   await levelWorld.addWalls([
@@ -109,5 +112,5 @@ Future<void> level2Initialization(LevelWorld levelWorld, List<Color> keyCardsOwn
 
   await levelWorld.addKeyCards([KeyCard(position: Vector2(800, 50), color: Palette.orange)]);
 
-  await levelWorld.addCheckPoints([CheckPoint(position: Vector2(700, 450), id: 5)]);
+  await levelWorld.addCheckPoints([CheckPoint(position: Vector2(475, 650), id: 4), CheckPoint(position: Vector2(700, 450), id: 5)]);
 }

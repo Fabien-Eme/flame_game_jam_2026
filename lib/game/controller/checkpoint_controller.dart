@@ -18,9 +18,6 @@ class CheckpointController extends Component with HasGameReference<FGJ2026> {
   Future<int> getCurrentCheckpointInMemory() async {
     final asyncPrefs = SharedPreferencesAsync();
 
-    //TODO Remove Debug
-    await asyncPrefs.setInt('currentCheckpoint', 6);
-
     final currentCheckpoint = await asyncPrefs.getInt('currentCheckpoint');
     this.currentCheckpoint = currentCheckpoint ?? 0;
     return this.currentCheckpoint;

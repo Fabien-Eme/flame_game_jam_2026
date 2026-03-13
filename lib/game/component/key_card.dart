@@ -6,6 +6,7 @@ import '../game.dart';
 import '../level/level2_initialization.dart';
 import '../level/level3_initialization.dart';
 import '../level/level_world.dart';
+import 'arrow.dart';
 import 'bb_camera.dart';
 
 class KeyCard extends PositionComponent with HasWorldReference<LevelWorld>, HasGameReference<FGJ2026> {
@@ -39,6 +40,8 @@ class KeyCard extends PositionComponent with HasWorldReference<LevelWorld>, HasG
   }
 
   void pickUp() async {
+    if (game.keycardController.keyCardsOwned.contains(color)) return;
+
     game.keycardController.pickUpKeyCard(color, world.keyCardHUD);
 
     final List<BBCamera> bbCameras = [];
@@ -50,12 +53,23 @@ class KeyCard extends PositionComponent with HasWorldReference<LevelWorld>, HasG
       bbCamera.removeOnKeyCardTrigger(color);
     }
 
+    final List<Arrow> arrows = [];
+
+    arrows.addAll(world.arrows);
+
+    for (var arrow in world.arrows) {
+      if (arrow.color == color) {
+        arrow.removeFromParent();
+      }
+    }
+
     if (color == Palette.darkYellow) {
       level2Initialization(world, game.keycardController.keyCardsOwned);
     }
     if (color == Palette.orange) {
       level3Initialization(world, game.keycardController.keyCardsOwned);
     }
+
     removeFromParent();
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 
 import '../../utils/palette.dart';
 import '../game.dart';
+import 'dart:async';
 
 class MenuEntry extends PositionComponent with HasGameReference<FGJ2026>, HoverCallbacks, HasWorldReference<World>, TapCallbacks {
   MenuEntry({required this.text, this.isSelected = false, super.key});
@@ -16,9 +17,12 @@ class MenuEntry extends PositionComponent with HasGameReference<FGJ2026>, HoverC
 
   bool isSelected = false;
 
+  RectangleComponent leftSelection = RectangleComponent();
+  RectangleComponent rightSelection = RectangleComponent();
+
   @override
-  void onLoad() {
-    add(
+  FutureOr<void> onLoad() async {
+    await add(
       textComponent = TextComponent(
         anchor: Anchor.center,
         text: text,
@@ -27,15 +31,33 @@ class MenuEntry extends PositionComponent with HasGameReference<FGJ2026>, HoverC
     );
 
     textComponent.add(RectangleHitbox.relative(Vector2(1.025, 0.7), parentSize: textComponent.size, collisionType: CollisionType.passive));
-    super.onLoad();
+    return super.onLoad();
   }
 
   void select() {
     isSelected = true;
+    add(
+      leftSelection = RectangleComponent(
+        anchor: Anchor.center,
+        position: Vector2(-25 - textComponent.size.x / 2, 2),
+        size: Vector2(25, 5),
+        paint: Paint()..color = Palette.white,
+      ),
+    );
+    add(
+      rightSelection = RectangleComponent(
+        anchor: Anchor.center,
+        position: Vector2(25 + textComponent.size.x / 2, 2),
+        size: Vector2(25, 5),
+        paint: Paint()..color = Palette.white,
+      ),
+    );
   }
 
   void deselect() {
     isSelected = false;
+    leftSelection.removeFromParent();
+    rightSelection.removeFromParent();
   }
 
   void toggleSelection() {
@@ -60,7 +82,6 @@ class MenuEntry extends PositionComponent with HasGameReference<FGJ2026>, HoverC
 
   @override
   void onHoverExit() {
-    (world.parent! as MainMenu).deselect(this);
     game.mouseCursor = SystemMouseCursors.basic;
     super.onHoverExit();
   }

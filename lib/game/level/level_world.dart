@@ -2,18 +2,22 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame_game_jam_2026/game/component/arrow.dart';
 import 'package:flame_game_jam_2026/game/component/bb_camera.dart';
 import 'package:flame_game_jam_2026/game/component/key_card_hud.dart';
 import 'package:flame_game_jam_2026/game/controller/player_movement_controller.dart';
 
 import '../../utils/palette.dart';
 import '../component/check_point.dart';
+import '../component/chronometer.dart';
+import '../component/explanations.dart';
 import '../component/key_card.dart';
 import '../controller/busted_controller.dart';
 import '../component/room.dart';
 import '../component/wall.dart';
 import '../controller/custom_gamepad_controller.dart';
 import '../controller/ray_controller.dart';
+import '../controller/victory_controller.dart';
 import '../game.dart';
 import '../component/player.dart';
 import '../component/door.dart';
@@ -22,6 +26,7 @@ import 'level.dart';
 import 'level1_initialization.dart';
 import 'level2_initialization.dart';
 import 'level3_initialization.dart';
+import '../controller/welcome_controller.dart';
 
 class LevelWorld extends World with HasGameReference<FGJ2026>, HasCollisionDetection {
   LevelWorld({super.key});
@@ -33,12 +38,15 @@ class LevelWorld extends World with HasGameReference<FGJ2026>, HasCollisionDetec
   List<BBCamera> bbCameras = [];
   List<KeyCard> keyCards = [];
   List<CheckPoint> checkPoints = [];
+  List<Arrow> arrows = [];
 
   late final KeyCardHUD keyCardHUD;
 
   late final PlayerComponent player;
 
   late final BustedController bustedController;
+  late final VictoryController victoryController;
+  late final WelcomeController welcomeController;
   late final RayController rayController;
 
   final Vector2 initialPlayerPosition = Vector2(50, 100);
@@ -57,8 +65,9 @@ class LevelWorld extends World with HasGameReference<FGJ2026>, HasCollisionDetec
       ),
     );
 
-    await addAll([bustedController = BustedController()]);
-
+    await add(welcomeController = WelcomeController());
+    await add(bustedController = BustedController());
+    await add(victoryController = VictoryController());
     await add(player = PlayerComponent(position: Vector2(-1000, -1000)));
 
     await add(playerMovementController = PlayerMovementController(player: player));
@@ -74,8 +83,8 @@ class LevelWorld extends World with HasGameReference<FGJ2026>, HasCollisionDetec
     await add(keyCardHUD = KeyCardHUD(position: Vector2(FGJ2026.gameWidth - 150, FGJ2026.gameHeight - 125)));
     await add(MenuInGame(position: Vector2(FGJ2026.gameWidth - 125, 25)));
 
-    if ((parent! as Level).newGame) {
-      game.checkpointController.resetCheckpoint();
+    if ((parent! as Level).speedRunMode) {
+      await add(Chronometer(position: Vector2(FGJ2026.gameWidth / 2 - 75, FGJ2026.gameHeight / 2 + 20)));
     }
 
     game.keycardController.removeKeyCardAlreadyCollected(this);
@@ -88,7 +97,11 @@ class LevelWorld extends World with HasGameReference<FGJ2026>, HasCollisionDetec
       await game.keycardController.getKeyCardsInMemory(keyCardHUD);
     }
 
-    //(parent! as Level).cameraComponent.viewfinder.position = player.position - Vector2(FGJ2026.gameWidth / 2, FGJ2026.gameHeight / 2);
+    await add(Explanations(position: Vector2(875, 7.5)));
+
+    if ((parent! as Level).newGame) {
+      welcomeController.welcome();
+    }
 
     return super.onLoad();
   }
@@ -161,5 +174,10 @@ class LevelWorld extends World with HasGameReference<FGJ2026>, HasCollisionDetec
     for (final checkPoint in checkPoints) {
       await addCheckPoint(checkPoint);
     }
+  }
+
+  Future<void> addArrow(Arrow arrow) async {
+    await add(arrow);
+    arrows.add(arrow);
   }
 }

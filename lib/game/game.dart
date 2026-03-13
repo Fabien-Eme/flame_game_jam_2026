@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/game_assets.dart';
 import '../utils/palette.dart';
@@ -24,6 +25,8 @@ class FGJ2026 extends FlameGame {
 
   Vector2 mousePosition = Vector2.zero();
 
+  bool postProcessing = true;
+
   @override
   FutureOr<void> onLoad() async {
     await add(audioController = AudioController());
@@ -32,10 +35,8 @@ class FGJ2026 extends FlameGame {
 
     await checkpointController.getCurrentCheckpointInMemory();
 
-    /// Preload all images
-    images.prefix = '';
-    final futurePreLoadImages = preLoadAssetsImages().map((loadableBuilder) => loadableBuilder());
-    await Future.wait<void>(futurePreLoadImages);
+    final asyncPrefs = SharedPreferencesAsync();
+    postProcessing = await asyncPrefs.getBool('postProcessing') ?? true;
 
     /// Add router
     add(router = GameRouter());

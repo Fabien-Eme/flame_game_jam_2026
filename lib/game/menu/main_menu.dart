@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 
 import '../../utils/palette.dart';
 import '../game.dart';
+import '../component/highscore.dart';
 import '../level/post_process.dart';
 import 'menu_entry.dart';
 
@@ -19,10 +20,10 @@ class MainMenu extends PositionComponent with HasGameReference<FGJ2026> {
 
   @override
   FutureOr<void> onLoad() async {
-    add(world);
+    await add(world);
 
-    add(cameraComponent = CameraComponent.withFixedResolution(width: FGJ2026.gameWidth, height: FGJ2026.gameHeight, world: world));
-    cameraComponent.postProcess = CRTPostProcess();
+    await add(cameraComponent = CameraComponent.withFixedResolution(width: FGJ2026.gameWidth, height: FGJ2026.gameHeight, world: world));
+    cameraComponent.postProcess = game.postProcessing ? CRTPostProcess() : null;
 
     world.add(
       RectangleComponent.fromRect(
@@ -33,10 +34,10 @@ class MainMenu extends PositionComponent with HasGameReference<FGJ2026> {
     );
 
     if (game.checkpointController.currentCheckpoint > 0) {
-      menuEntries.add(MenuEntry(text: 'CONTINUE', isSelected: true));
+      menuEntries.add(MenuEntry(text: 'CONTINUE'));
     }
 
-    menuEntries.add(MenuEntry(text: 'NEW GAME', isSelected: true));
+    menuEntries.add(MenuEntry(text: 'NEW GAME'));
 
     menuEntries.addAll([MenuEntry(text: 'SPEED RUN MODE'), MenuEntry(text: 'GAMEPAD CONFIGURATION'), MenuEntry(text: 'SETTINGS')]);
 
@@ -50,9 +51,21 @@ class MainMenu extends PositionComponent with HasGameReference<FGJ2026> {
       ),
     );
 
-    select(menuEntries.first);
+    world.add(HighscoreComponent(position: Vector2(FGJ2026.gameWidth / 2 - 150, -170)));
 
     return super.onLoad();
+  }
+
+  @override
+  FutureOr<void> onMount() async {
+    // await all menu entries to be loaded
+    List<Future<void>> futures = [];
+    for (final entry in menuEntries) {
+      futures.add(entry.loaded);
+    }
+    await Future.wait(futures);
+    select(menuEntries.first);
+    return super.onMount();
   }
 
   void select(MenuEntry entry) {
@@ -65,5 +78,23 @@ class MainMenu extends PositionComponent with HasGameReference<FGJ2026> {
 
   void deselect(MenuEntry entry) {
     entry.deselect();
+  }
+
+  void selectNext() {
+    int currentIndex = menuEntries.indexOf(menuEntries.firstWhere((e) => e.isSelected));
+    if (currentIndex == menuEntries.length - 1) {
+      select(menuEntries.first);
+    } else {
+      select(menuEntries[currentIndex + 1]);
+    }
+  }
+
+  void selectPrevious() {
+    int currentIndex = menuEntries.indexOf(menuEntries.firstWhere((e) => e.isSelected));
+    if (currentIndex == 0) {
+      select(menuEntries.last);
+    } else {
+      select(menuEntries[currentIndex - 1]);
+    }
   }
 }

@@ -77,6 +77,10 @@ class PlayerMovementController extends Component with HasWorldReference<LevelWor
       isMovingYPossible = false;
     }
 
+    if (player.position.x > 1300) {
+      world.victoryController.won();
+    }
+
     // if (isMovingXPossible) {
     //   if (isMovingYPossible) {
     //     cameraComponent.viewfinder.position += movement;
@@ -165,7 +169,7 @@ class PlayerMovementController extends Component with HasWorldReference<LevelWor
         keyCard.deselect();
       }
     }
-    if (nearestKeyCard != null) {
+    if (nearestKeyCard != null && !game.keycardController.keyCardsOwned.contains(nearestKeyCard!.color)) {
       nearestKeyCard!.select();
       selectedKeyCard = nearestKeyCard;
     }

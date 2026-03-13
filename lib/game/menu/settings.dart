@@ -7,10 +7,12 @@ import 'package:flame_game_jam_2026/game/game.dart';
 import 'package:flame_game_jam_2026/game/level/post_process.dart';
 import 'package:flame_game_jam_2026/utils/palette.dart';
 import 'package:flutter/rendering.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Settings extends PositionComponent with HasGameReference<FGJ2026> {
   final World world = World();
   late final CameraComponent cameraComponent;
+  late final TextComponent buttonShader;
 
   TextComponent musicVolumeText = TextComponent(
     text: '100',
@@ -27,10 +29,11 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
     musicVolumeText.text = game.audioController.musicVolume.toString();
     soundVolumeText.text = game.audioController.soundVolume.toString();
 
-    add(world);
+    await add(world);
 
-    add(cameraComponent = CameraComponent.withFixedResolution(width: FGJ2026.gameWidth, height: FGJ2026.gameHeight, world: world));
-    cameraComponent.postProcess = CRTPostProcess();
+    await add(cameraComponent = CameraComponent.withFixedResolution(width: FGJ2026.gameWidth, height: FGJ2026.gameHeight, world: world));
+
+    cameraComponent.postProcess = game.postProcessing ? CRTPostProcess() : null;
 
     world.add(
       RectangleComponent.fromRect(
@@ -42,7 +45,7 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
     world.add(
       ColumnComponent(
         anchor: Anchor.center,
-        gap: 25,
+        gap: 10,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -96,6 +99,27 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
                 onPressed: soundVolumeUp,
               ),
             ],
+          ),
+          TextComponent(
+            text: '',
+            textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
+          ),
+          TextComponent(
+            text: 'POST PROCESSING',
+            textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
+          ),
+          ButtonComponent(
+            button: buttonShader = TextComponent(
+              text: (game.postProcessing ? 'ON' : 'OFF'),
+              textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
+            ),
+            onPressed: () {
+              game.postProcessing = !game.postProcessing;
+              cameraComponent.postProcess = game.postProcessing ? CRTPostProcess() : null;
+              buttonShader.text = (game.postProcessing ? 'ON' : 'OFF');
+              final asyncPrefs = SharedPreferencesAsync();
+              asyncPrefs.setBool('postProcessing', game.postProcessing);
+            },
           ),
           TextComponent(
             text: '',

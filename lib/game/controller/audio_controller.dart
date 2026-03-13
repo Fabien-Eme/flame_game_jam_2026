@@ -16,6 +16,7 @@ class AudioController extends Component with HasGameReference<FGJ2026> {
   late final AudioSource checkpointReachedSound;
   late final AudioSource menuClickSound;
   late final AudioSource doorSound;
+  late final AudioSource victorySound;
 
   late final SharedPreferencesAsync asyncPrefs;
 
@@ -33,6 +34,7 @@ class AudioController extends Component with HasGameReference<FGJ2026> {
     checkpointReachedSound = await SoLoud.instance.loadAsset('assets/checkpoint.wav', mode: LoadMode.disk);
     menuClickSound = await SoLoud.instance.loadAsset('assets/menu_click.wav', mode: LoadMode.disk);
     doorSound = await SoLoud.instance.loadAsset('assets/door.wav', mode: LoadMode.disk);
+    victorySound = await SoLoud.instance.loadAsset('assets/victory.wav', mode: LoadMode.disk);
     musicHandle = await SoLoud.instance.play(music, looping: true);
     return super.onLoad();
   }
@@ -85,8 +87,13 @@ class AudioController extends Component with HasGameReference<FGJ2026> {
   void playDoorSound() {
     SoLoud.instance.play(doorSound, volume: soundVolume / 100);
   }
+
+  void playVictorySound() {
+    SoLoud.instance.play(victorySound, volume: soundVolume / 100);
+  }
 }
 
 
 
-/// music linl : https://musiclab.chromeexperiments.com/Song-Maker/song/6176363144413184
+/// music composed here : https://musiclab.chromeexperiments.com/Song-Maker/song/6176363144413184
+/// sound effect made with : https://sfbgames.itch.io/chiptone
