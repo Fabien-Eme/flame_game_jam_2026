@@ -97,7 +97,7 @@ class LevelWorld extends World with HasGameReference<FGJ2026>, HasCollisionDetec
       await game.keycardController.getKeyCardsInMemory(keyCardHUD);
     }
 
-    await add(Explanations(position: Vector2(875, 7.5)));
+    await add(Explanations(position: Vector2(875, 7.5), inGame: true));
 
     if ((parent! as Level).newGame) {
       welcomeController.welcome();

@@ -7,6 +7,7 @@ import 'package:flame/experimental.dart';
 import 'package:flutter/rendering.dart';
 
 import '../../utils/palette.dart';
+import '../component/explanations.dart';
 import '../game.dart';
 import '../component/highscore.dart';
 import '../level/post_process.dart';
@@ -52,6 +53,8 @@ class MainMenu extends PositionComponent with HasGameReference<FGJ2026> {
     );
 
     world.add(HighscoreComponent(position: Vector2(FGJ2026.gameWidth / 2 - 150, -170)));
+
+    world.add(Explanations(position: Vector2(-FGJ2026.gameWidth / 2 + 50, 0), inGame: false));
 
     return super.onLoad();
   }
