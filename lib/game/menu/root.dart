@@ -10,6 +10,7 @@ class Root extends Component with HasGameReference<FGJ2026> {
     // game.router.pushNamed('level');
     // game.router.pushNamed('speedRunMode');
     game.router.pushNamed('mainMenu');
+    // game.router.pushNamed('gamepadConfiguration');
     // game.router.pushNamed('settings');
   }
 }

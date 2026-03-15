@@ -1,12 +1,11 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flame_game_jam_2026/game/level/level2_initialization.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/palette.dart';
 import '../component/key_card_hud.dart';
-import '../level/level3_initialization.dart';
 import '../level/level_world.dart';
 import '../game.dart';
 

@@ -86,12 +86,10 @@ class BBCamera extends PositionComponent with HasWorldReference<LevelWorld> {
         startAngle -= pi / 4 * angleSpeed * dt;
       }
     }
-    if (rotationAmplitude != null) {
-      if (startAngle >= initialAngle + rotationAmplitude! / 2) {
-        isGoingClockwise = false;
-      } else if (startAngle < initialAngle - rotationAmplitude! / 2) {
-        isGoingClockwise = true;
-      }
+    if (startAngle >= initialAngle + rotationAmplitude / 2) {
+      isGoingClockwise = false;
+    } else if (startAngle < initialAngle - rotationAmplitude / 2) {
+      isGoingClockwise = true;
     }
 
     if (isMoving) {

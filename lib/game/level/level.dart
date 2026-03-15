@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 
 import '../../utils/debug_pointer.dart';
-import '../../utils/palette.dart';
 import '../game.dart';
 import 'level_world.dart';
 import 'post_process.dart';

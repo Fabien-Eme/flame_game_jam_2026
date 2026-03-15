@@ -15,7 +15,6 @@ import '../component/key_card.dart';
 import '../controller/busted_controller.dart';
 import '../component/room.dart';
 import '../component/wall.dart';
-import '../controller/custom_gamepad_controller.dart';
 import '../controller/ray_controller.dart';
 import '../controller/victory_controller.dart';
 import '../game.dart';
@@ -71,8 +70,10 @@ class LevelWorld extends World with HasGameReference<FGJ2026>, HasCollisionDetec
     await add(player = PlayerComponent(position: Vector2(-1000, -1000)));
 
     await add(playerMovementController = PlayerMovementController(player: player));
-    await add(CustomGamepadController(playerMovementController: playerMovementController));
     await add(rayController = RayController(priority: -100));
+
+    game.universalGamepadController.levelWorld = this;
+    game.keyboardController.levelWorld = this;
 
     final keyCardsOwned = await game.keycardController.getKeyCardsInMemory();
 

@@ -5,6 +5,8 @@ import 'package:flame/components.dart';
 import 'package:flame/post_process.dart';
 
 class CRTPostProcess extends PostProcess {
+  CRTPostProcess() : super(pixelRatio: 1);
+
   @override
   Future<void> onLoad() async {
     await super.onLoad();
@@ -32,6 +34,7 @@ class CRTPostProcess extends PostProcess {
 
     _fragmentShader.setFloatUniforms((value) {
       value
+        // Keep the shader and the rasterized image in the same logical space.
         ..setVector(size)
         ..setFloat(_time)
         ..setFloat(_rng.nextDouble());

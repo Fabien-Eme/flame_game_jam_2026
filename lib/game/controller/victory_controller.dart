@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flutter/rendering.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/palette.dart';
 import '../component/won.dart';
@@ -24,6 +25,10 @@ class VictoryController extends Component with HasWorldReference<LevelWorld>, Ha
 
   void won() {
     if (hasWon) return;
+
+    final asyncPrefs = SharedPreferencesAsync();
+    asyncPrefs.setBool('hasWon', true);
+
     HighscoreService.saveScore("Fabien", timeElapsed);
     game.audioController.playVictorySound();
     hasWon = true;

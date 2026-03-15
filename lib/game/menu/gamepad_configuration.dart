@@ -16,6 +16,9 @@ import 'button_choose_key.dart';
 enum CalibrationPhase { choose, welcome, rest, topAndBottom, rightAndLeft, button1, button2, finish, keyboard }
 
 class GamepadConfiguration extends PositionComponent with HasGameReference<FGJ2026> {
+  static const Set<String> _fallbackXAxisKeys = {'dwXpos', 'analog 0'};
+  static const Set<String> _fallbackYAxisKeys = {'dwYpos', 'analog 1'};
+
   final World world = World();
   late final CameraComponent cameraComponent;
 
@@ -36,6 +39,8 @@ class GamepadConfiguration extends PositionComponent with HasGameReference<FGJ20
 
   String button1Key = '';
   String button2Key = '';
+  String xAxisKey = '';
+  String yAxisKey = '';
 
   @override
   FutureOr<void> onLoad() async {
@@ -329,15 +334,15 @@ class GamepadConfiguration extends PositionComponent with HasGameReference<FGJ20
 
     await Future.delayed(const Duration(seconds: 1));
 
-    List<double> xValues = [];
-    List<double> yValues = [];
+    final Map<String, List<double>> xValuesByKey = {};
+    final Map<String, List<double>> yValuesByKey = {};
 
     final subscription = Gamepads.events.listen((event) {
       if (event.type == KeyType.button) return;
-      if (event.key == 'dwXpos') {
-        xValues.add(event.value);
-      } else if (event.key == 'dwYpos') {
-        yValues.add(event.value);
+      if (_fallbackXAxisKeys.contains(event.key)) {
+        xValuesByKey.putIfAbsent(event.key, () => []).add(event.value);
+      } else if (_fallbackYAxisKeys.contains(event.key)) {
+        yValuesByKey.putIfAbsent(event.key, () => []).add(event.value);
       }
     });
 
@@ -346,8 +351,10 @@ class GamepadConfiguration extends PositionComponent with HasGameReference<FGJ20
       loadingBar.removeFromParent();
       subscription.cancel();
 
-      xRest = getCleanAverage(xValues);
-      yRest = getCleanAverage(yValues);
+      xAxisKey = _chooseAxisKey(xValuesByKey, currentKey: xAxisKey, fallbackKey: 'dwXpos');
+      yAxisKey = _chooseAxisKey(yValuesByKey, currentKey: yAxisKey, fallbackKey: 'dwYpos');
+      xRest = getCleanAverage(xValuesByKey[xAxisKey] ?? const []);
+      yRest = getCleanAverage(yValuesByKey[yAxisKey] ?? const []);
     });
   }
 
@@ -381,12 +388,12 @@ class GamepadConfiguration extends PositionComponent with HasGameReference<FGJ20
 
     await Future.delayed(const Duration(seconds: 1));
 
-    List<double> yValues = [];
+    final Map<String, List<double>> yValuesByKey = {};
 
     final subscription = Gamepads.events.listen((event) {
       if (event.type == KeyType.button) return;
-      if (event.key == 'dwYpos') {
-        yValues.add(event.value);
+      if (_fallbackYAxisKeys.contains(event.key)) {
+        yValuesByKey.putIfAbsent(event.key, () => []).add(event.value);
       }
     });
 
@@ -395,7 +402,8 @@ class GamepadConfiguration extends PositionComponent with HasGameReference<FGJ20
       loadingBar.removeFromParent();
       subscription.cancel();
 
-      final yExtremes = getCleanExtremes(yValues);
+      yAxisKey = _chooseAxisKey(yValuesByKey, currentKey: yAxisKey, fallbackKey: 'dwYpos');
+      final yExtremes = getCleanExtremes(yValuesByKey[yAxisKey] ?? const []);
       yMin = yExtremes.min;
       yMax = yExtremes.max;
     });
@@ -422,12 +430,12 @@ class GamepadConfiguration extends PositionComponent with HasGameReference<FGJ20
 
     await Future.delayed(const Duration(seconds: 1));
 
-    List<double> xValues = [];
+    final Map<String, List<double>> xValuesByKey = {};
 
     final subscription = Gamepads.events.listen((event) {
       if (event.type == KeyType.button) return;
-      if (event.key == 'dwXpos') {
-        xValues.add(event.value);
+      if (_fallbackXAxisKeys.contains(event.key)) {
+        xValuesByKey.putIfAbsent(event.key, () => []).add(event.value);
       }
     });
 
@@ -436,10 +444,28 @@ class GamepadConfiguration extends PositionComponent with HasGameReference<FGJ20
       loadingBar.removeFromParent();
       subscription.cancel();
 
-      final xExtremes = getCleanExtremes(xValues);
+      xAxisKey = _chooseAxisKey(xValuesByKey, currentKey: xAxisKey, fallbackKey: 'dwXpos');
+      final xExtremes = getCleanExtremes(xValuesByKey[xAxisKey] ?? const []);
       xMin = xExtremes.min;
       xMax = xExtremes.max;
     });
+  }
+
+  String _chooseAxisKey(
+    Map<String, List<double>> valuesByKey, {
+    required String currentKey,
+    required String fallbackKey,
+  }) {
+    if (currentKey.isNotEmpty && valuesByKey.containsKey(currentKey)) {
+      return currentKey;
+    }
+    if (valuesByKey.isEmpty) {
+      return currentKey.isNotEmpty ? currentKey : fallbackKey;
+    }
+
+    return valuesByKey.entries.reduce((best, entry) {
+      return entry.value.length > best.value.length ? entry : best;
+    }).key;
   }
 
   ({double min, double max}) getCleanExtremes(List<double> values) {
@@ -525,7 +551,18 @@ class GamepadConfiguration extends PositionComponent with HasGameReference<FGJ20
   }
 
   Future<void> saveGamepadConfigurationToPrefs() async {
-    await game.universalGamepadController.saveGamepadConfigurationToPrefs(button1Key, button2Key, xRest, yRest, xMin, xMax, yMin, yMax);
+    await game.universalGamepadController.saveGamepadConfigurationToPrefs(
+      button1Key,
+      button2Key,
+      xAxisKey,
+      yAxisKey,
+      xRest,
+      yRest,
+      xMin,
+      xMax,
+      yMin,
+      yMax,
+    );
 
     final finishText = TextComponent(
       anchor: Anchor.center,

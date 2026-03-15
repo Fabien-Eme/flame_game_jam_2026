@@ -1,16 +1,12 @@
 import 'dart:math';
 import 'package:flame/components.dart';
 import '../../game/component/bb_camera.dart';
-import '../../game/component/room.dart';
 import '../../game/component/wall.dart';
 import '../../game/level/level_world.dart';
-import '../../game/game.dart';
 import '../../utils/constants.dart';
 import '../../utils/palette.dart';
-import '../../game/component/key_card.dart';
 import '../component/arrow.dart';
 import '../component/check_point.dart';
-import '../component/door.dart';
 import 'dart:ui';
 
 Future<void> level3Initialization(LevelWorld levelWorld, List<Color> keyCardsOwned) async {

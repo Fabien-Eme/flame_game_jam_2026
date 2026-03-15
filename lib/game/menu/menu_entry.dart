@@ -9,13 +9,14 @@ import '../game.dart';
 import 'dart:async';
 
 class MenuEntry extends PositionComponent with HasGameReference<FGJ2026>, HoverCallbacks, HasWorldReference<World>, TapCallbacks {
-  MenuEntry({required this.text, this.isSelected = false, super.key});
+  MenuEntry({required this.text, this.isSelected = false, this.isAvailable = true, super.key});
 
   final String text;
 
   late final TextComponent textComponent;
 
   bool isSelected = false;
+  bool isAvailable;
 
   RectangleComponent leftSelection = RectangleComponent();
   RectangleComponent rightSelection = RectangleComponent();
@@ -26,7 +27,7 @@ class MenuEntry extends PositionComponent with HasGameReference<FGJ2026>, HoverC
       textComponent = TextComponent(
         anchor: Anchor.center,
         text: text,
-        textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
+        textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: isAvailable ? Palette.white : Palette.grey)),
       ),
     );
 
@@ -35,6 +36,7 @@ class MenuEntry extends PositionComponent with HasGameReference<FGJ2026>, HoverC
   }
 
   void select() {
+    if (!isAvailable || isSelected) return;
     isSelected = true;
     add(
       leftSelection = RectangleComponent(
@@ -75,6 +77,7 @@ class MenuEntry extends PositionComponent with HasGameReference<FGJ2026>, HoverC
 
   @override
   void onHoverEnter() {
+    if (!isAvailable) return;
     (world.parent! as MainMenu).select(this);
     game.mouseCursor = SystemMouseCursors.click;
     super.onHoverEnter();
@@ -88,6 +91,7 @@ class MenuEntry extends PositionComponent with HasGameReference<FGJ2026>, HoverC
 
   @override
   void onTapDown(TapDownEvent event) {
+    if (!isAvailable) return;
     game.audioController.playMenuClickSound();
     if (text == 'CONTINUE') {
       game.router.pushReplacementNamed('level');
@@ -95,7 +99,7 @@ class MenuEntry extends PositionComponent with HasGameReference<FGJ2026>, HoverC
       game.router.pushReplacementNamed('newGame');
     } else if (text == 'SPEED RUN MODE') {
       game.router.pushReplacementNamed('speedRunMode');
-    } else if (text == 'GAMEPAD CONFIGURATION') {
+    } else if (text == 'INPUT CONFIGURATION') {
       game.router.pushReplacementNamed('gamepadConfiguration');
     } else if (text == 'SETTINGS') {
       game.router.pushReplacementNamed('settings');

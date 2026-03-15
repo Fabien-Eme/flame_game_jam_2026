@@ -29,6 +29,7 @@ class WelcomeController extends Component with HasWorldReference<LevelWorld>, Ha
     hasBeenWelcomed = true;
     hasWelcomedDelayedElapsed = false;
     world.isPaused = true;
+
     add(
       rectangleComponent = RectangleComponent(
         position: (world.parent! as Level).cameraComponent.viewfinder.position,

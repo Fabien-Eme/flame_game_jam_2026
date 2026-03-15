@@ -60,23 +60,13 @@ class HighscoreComponent extends PositionComponent with HasWorldReference<World>
   @override
   void update(double dt) {
     super.update(dt);
+
+    if (loadingBar.size == Vector2(200, 10)) return;
     if (loadingBar.size.x < 200) {
       loadingBar.size = Vector2(loadingBar.size.x + 200 / 5 * dt, 10);
     } else {
       loadingBar.size = Vector2(200, 10);
     }
-
-    add(
-      RectangleComponent(
-        anchor: Anchor.topCenter,
-        position: Vector2(0, -10),
-        size: Vector2(250, 375),
-        paint: Paint()
-          ..strokeWidth = 3
-          ..style = PaintingStyle.stroke
-          ..color = Palette.white,
-      ),
-    );
   }
 
   Future<void> fetchScores() async {

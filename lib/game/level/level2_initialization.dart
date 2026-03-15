@@ -4,7 +4,6 @@ import '../../game/component/bb_camera.dart';
 import '../../game/component/room.dart';
 import '../../game/component/wall.dart';
 import '../../game/level/level_world.dart';
-import '../../game/game.dart';
 import '../../utils/constants.dart';
 import '../../utils/palette.dart';
 import '../../game/component/key_card.dart';

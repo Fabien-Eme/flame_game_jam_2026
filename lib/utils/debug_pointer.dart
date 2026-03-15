@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 
-import '../game/level/level.dart';
 import '../game/game.dart';
 
 class DebugPointer extends PositionComponent with HasGameReference<FGJ2026> {
@@ -26,8 +25,6 @@ class DebugPointer extends PositionComponent with HasGameReference<FGJ2026> {
     if (precision != null) {
       // print coordinates at the center
       final p1 = absolutePositionOfAnchor(Anchor.center);
-      final x1str = p1.x.toStringAsFixed(precision);
-      final y1str = p1.y.toStringAsFixed(precision);
 
       final zoom = (parent as FixedResolutionViewport).camera.viewfinder.zoom;
       final x = (parent as FixedResolutionViewport).camera.viewfinder.position.x + FGJ2026.gameWidth / 2 / zoom;

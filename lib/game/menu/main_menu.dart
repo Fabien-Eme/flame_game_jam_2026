@@ -5,6 +5,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flutter/rendering.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/palette.dart';
 import '../component/explanations.dart';
@@ -19,11 +20,14 @@ class MainMenu extends PositionComponent with HasGameReference<FGJ2026> {
 
   final List<MenuEntry> menuEntries = [];
 
+  bool hasWon = false;
+
   @override
   FutureOr<void> onLoad() async {
     await add(world);
 
     await add(cameraComponent = CameraComponent.withFixedResolution(width: FGJ2026.gameWidth, height: FGJ2026.gameHeight, world: world));
+
     cameraComponent.postProcess = game.postProcessing ? CRTPostProcess() : null;
 
     world.add(
@@ -34,13 +38,33 @@ class MainMenu extends PositionComponent with HasGameReference<FGJ2026> {
       ),
     );
 
-    if (game.checkpointController.currentCheckpoint > 0) {
-      menuEntries.add(MenuEntry(text: 'CONTINUE'));
+    final asyncPrefs = SharedPreferencesAsync();
+    hasWon = await asyncPrefs.getBool('hasWon') ?? false;
+
+    final bool isGamepadCalibrated = await asyncPrefs.getBool('isGamepadCalibrated') ?? false;
+    final bool isKeyboardCalibrated = await asyncPrefs.getBool('isKeyboardCalibrated') ?? false;
+    final bool isAtleastOneInputDeviceCalibrated = isGamepadCalibrated || isKeyboardCalibrated;
+
+    if (!isAtleastOneInputDeviceCalibrated) {
+      world.add(
+        TextComponent(
+          anchor: Anchor.center,
+          position: Vector2(0, -200),
+          text: 'Configure at least one input device to play',
+          textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
+        ),
+      );
     }
 
-    menuEntries.add(MenuEntry(text: 'NEW GAME'));
+    if (game.checkpointController.currentCheckpoint > 0) {
+      menuEntries.add(MenuEntry(text: 'CONTINUE', isAvailable: isAtleastOneInputDeviceCalibrated));
+    }
 
-    menuEntries.addAll([MenuEntry(text: 'SPEED RUN MODE'), MenuEntry(text: 'GAMEPAD CONFIGURATION'), MenuEntry(text: 'SETTINGS')]);
+    menuEntries.add(MenuEntry(text: 'NEW GAME', isAvailable: isAtleastOneInputDeviceCalibrated));
+
+    menuEntries.add(MenuEntry(text: 'SPEED RUN MODE', isAvailable: hasWon && isAtleastOneInputDeviceCalibrated));
+
+    menuEntries.addAll([MenuEntry(text: 'INPUT CONFIGURATION'), MenuEntry(text: 'SETTINGS')]);
 
     await world.add(
       ColumnComponent(

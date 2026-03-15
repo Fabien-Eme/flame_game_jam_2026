@@ -16,11 +16,11 @@ class Explanations extends PositionComponent {
         ColumnComponent(
           children: [
             TextComponent(
-              text: 'Button 1 : Interact',
+              text: 'Button 1 : Run',
               textRenderer: TextPaint(style: TextStyle(fontSize: 20, color: Palette.white)),
             ),
             TextComponent(
-              text: 'Button 2 : Run',
+              text: 'Button 2 : Interact',
               textRenderer: TextPaint(style: TextStyle(fontSize: 20, color: Palette.white)),
             ),
             TextComponent(

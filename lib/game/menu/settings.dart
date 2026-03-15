@@ -2,24 +2,28 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
-import 'package:flame/input.dart';
 import 'package:flame_game_jam_2026/game/game.dart';
 import 'package:flame_game_jam_2026/game/level/post_process.dart';
 import 'package:flame_game_jam_2026/utils/palette.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../component/back_button.dart';
+import '../component/custom_text_button.dart';
+
 class Settings extends PositionComponent with HasGameReference<FGJ2026> {
   final World world = World();
   late final CameraComponent cameraComponent;
-  late final TextComponent buttonShader;
+  late final CustomTextButton buttonShader;
 
   TextComponent musicVolumeText = TextComponent(
+    anchor: Anchor.center,
     text: '100',
     textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
   );
 
   TextComponent soundVolumeText = TextComponent(
+    anchor: Anchor.center,
     text: '100',
     textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
   );
@@ -45,59 +49,32 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
     world.add(
       ColumnComponent(
         anchor: Anchor.center,
-        gap: 10,
+        gap: 30,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TextComponent(
-            text: 'MUSIC',
+            text: 'MUSIC    ',
             textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
           ),
           RowComponent(
             children: [
-              ButtonComponent(
-                button: TextComponent(
-                  text: '-   ',
-                  textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
-                ),
-                onPressed: musicVolumeDown,
-              ),
+              CustomTextButton(text: '-             ', onPressed: (game, world) => musicVolumeDown()),
 
               musicVolumeText,
-              ButtonComponent(
-                button: TextComponent(
-                  text: '   +',
-                  textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
-                ),
-                onPressed: musicVolumeUp,
-              ),
+              CustomTextButton(text: '       +', onPressed: (game, world) => musicVolumeUp()),
             ],
           ),
+
           TextComponent(
-            text: '',
-            textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
-          ),
-          TextComponent(
-            text: 'SOUND',
+            text: 'SOUND    ',
             textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
           ),
           RowComponent(
             children: [
-              ButtonComponent(
-                button: TextComponent(
-                  text: '-   ',
-                  textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
-                ),
-                onPressed: soundVolumeDown,
-              ),
+              CustomTextButton(text: '-          ', onPressed: (game, world) => soundVolumeDown()),
               soundVolumeText,
-              ButtonComponent(
-                button: TextComponent(
-                  text: '   +',
-                  textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
-                ),
-                onPressed: soundVolumeUp,
-              ),
+              CustomTextButton(text: '       +', onPressed: (game, world) => soundVolumeUp()),
             ],
           ),
           TextComponent(
@@ -108,12 +85,10 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
             text: 'POST PROCESSING',
             textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
           ),
-          ButtonComponent(
-            button: buttonShader = TextComponent(
-              text: (game.postProcessing ? 'ON' : 'OFF'),
-              textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
-            ),
-            onPressed: () {
+
+          buttonShader = CustomTextButton(
+            text: (game.postProcessing ? 'ON' : 'OFF'),
+            onPressed: (game, world) {
               game.postProcessing = !game.postProcessing;
               cameraComponent.postProcess = game.postProcessing ? CRTPostProcess() : null;
               buttonShader.text = (game.postProcessing ? 'ON' : 'OFF');
@@ -121,20 +96,13 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
               asyncPrefs.setBool('postProcessing', game.postProcessing);
             },
           ),
+
           TextComponent(
             text: '',
             textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
           ),
-          ButtonComponent(
-            button: TextComponent(
-              text: 'BACK',
-              textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
-            ),
-            onPressed: () {
-              game.audioController.playMenuClickSound();
-              game.router.pushReplacementNamed('mainMenu');
-            },
-          ),
+
+          BackButton(),
         ],
       ),
     );
