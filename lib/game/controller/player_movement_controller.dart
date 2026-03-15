@@ -47,6 +47,10 @@ class PlayerMovementController extends Component with HasWorldReference<LevelWor
     if (world.isPaused) return;
     super.update(dt);
 
+    if (direction.isZero()) {
+      return;
+    }
+
     /// Player movement and collision detection
 
     isMovingXPossible = true;

@@ -15,6 +15,7 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
   final World world = World();
   late final CameraComponent cameraComponent;
   late final CustomTextButton buttonShader;
+  late final CustomTextButton buttonQuality;
 
   TextComponent musicVolumeText = TextComponent(
     anchor: Anchor.center,
@@ -49,7 +50,7 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
     world.add(
       ColumnComponent(
         anchor: Anchor.center,
-        gap: 30,
+        gap: 20,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -96,6 +97,23 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
               asyncPrefs.setBool('postProcessing', game.postProcessing);
             },
           ),
+          TextComponent(
+            text: '',
+            textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
+          ),
+          TextComponent(
+            text: 'QUALITY',
+            textRenderer: TextPaint(style: TextStyle(fontSize: 30, color: Palette.white)),
+          ),
+          buttonQuality = CustomTextButton(
+            text: _qualityLabel(game.graphicsQuality),
+            onPressed: (game, world) {
+              game.graphicsQuality = game.graphicsQuality == GraphicsQuality.high ? GraphicsQuality.normal : GraphicsQuality.high;
+              buttonQuality.text = _qualityLabel(game.graphicsQuality);
+              final asyncPrefs = SharedPreferencesAsync();
+              asyncPrefs.setString('graphicsQuality', game.graphicsQuality.name);
+            },
+          ),
 
           TextComponent(
             text: '',
@@ -128,5 +146,9 @@ class Settings extends PositionComponent with HasGameReference<FGJ2026> {
   void soundVolumeUp() {
     game.audioController.soundVolumeUp();
     soundVolumeText.text = game.audioController.soundVolume.toString();
+  }
+
+  String _qualityLabel(GraphicsQuality quality) {
+    return quality == GraphicsQuality.high ? 'HIGH' : 'NORMAL';
   }
 }

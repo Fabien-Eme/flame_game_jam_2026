@@ -3,9 +3,10 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 
+import '../game.dart';
 import '../level/level_world.dart';
 
-class BBCamera extends PositionComponent with HasWorldReference<LevelWorld> {
+class BBCamera extends PositionComponent with HasWorldReference<LevelWorld>, HasGameReference<FGJ2026> {
   late final int id;
   double maxDistance;
   double startAngle;
@@ -59,7 +60,11 @@ class BBCamera extends PositionComponent with HasWorldReference<LevelWorld> {
     initialPosition = position.clone();
 
     angleCovered ??= rotationAmplitude;
-    numberOfRays = max(15, (52 * (maxDistance / 250) * (angleCovered! / (pi / 4))).round());
+    final rayQualityMultiplier = game.cameraRayQualityMultiplier;
+    numberOfRays = max(
+      game.minimumCameraRayCount,
+      (52 * rayQualityMultiplier * (maxDistance / 250) * (angleCovered! / (pi / 4))).round(),
+    );
   }
 
   void keyCardTrigger(Color color) {

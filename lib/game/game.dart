@@ -16,6 +16,8 @@ import 'router/router.dart';
 import 'controller/universal_gamepad_controller.dart';
 import 'controller/input_controller.dart';
 
+enum GraphicsQuality { normal, high }
+
 class FGJ2026 extends FlameGame with HasKeyboardHandlerComponents {
   static const double gameWidth = 1300;
   static const double gameHeight = 700;
@@ -32,6 +34,10 @@ class FGJ2026 extends FlameGame with HasKeyboardHandlerComponents {
   Vector2 mousePosition = Vector2.zero();
 
   bool postProcessing = true;
+  GraphicsQuality graphicsQuality = kIsWeb ? GraphicsQuality.normal : GraphicsQuality.high;
+
+  double get cameraRayQualityMultiplier => graphicsQuality == GraphicsQuality.high ? 1.0 : 0.55;
+  int get minimumCameraRayCount => graphicsQuality == GraphicsQuality.high ? 15 : 8;
 
   @override
   FutureOr<void> onLoad() async {
@@ -44,7 +50,10 @@ class FGJ2026 extends FlameGame with HasKeyboardHandlerComponents {
     await checkpointController.getCurrentCheckpointInMemory();
 
     final asyncPrefs = SharedPreferencesAsync();
-    postProcessing = await asyncPrefs.getBool('postProcessing') ?? true;
+    graphicsQuality = GraphicsQuality.values.byName(
+      await asyncPrefs.getString('graphicsQuality') ?? (kIsWeb ? GraphicsQuality.normal.name : GraphicsQuality.high.name),
+    );
+    postProcessing = await asyncPrefs.getBool('postProcessing') ?? (graphicsQuality == GraphicsQuality.high);
 
     /// Add router
     add(router = GameRouter());
