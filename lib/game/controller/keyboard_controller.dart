@@ -39,6 +39,27 @@ class KeyboardController extends Component with HasGameReference<FGJ2026>, Keybo
     final asyncPrefs = SharedPreferencesAsync();
     await asyncPrefs.setString(key, value);
 
+    switch (key) {
+      case 'button1Keyboard':
+        button1Keyboard = value;
+        break;
+      case 'button2Keyboard':
+        button2Keyboard = value;
+        break;
+      case 'upKeyboard':
+        upKeyboard = value;
+        break;
+      case 'downKeyboard':
+        downKeyboard = value;
+        break;
+      case 'leftKeyboard':
+        leftKeyboard = value;
+        break;
+      case 'rightKeyboard':
+        rightKeyboard = value;
+        break;
+    }
+
     final areAllKeysSet = await checkIfAllKeysAreSet();
     if (areAllKeysSet) {
       asyncPrefs.setBool('isKeyboardCalibrated', true);

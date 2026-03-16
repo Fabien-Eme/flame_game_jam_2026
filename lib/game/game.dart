@@ -50,9 +50,7 @@ class FGJ2026 extends FlameGame with HasKeyboardHandlerComponents {
     await checkpointController.getCurrentCheckpointInMemory();
 
     final asyncPrefs = SharedPreferencesAsync();
-    graphicsQuality = GraphicsQuality.values.byName(
-      await asyncPrefs.getString('graphicsQuality') ?? (kIsWeb ? GraphicsQuality.normal.name : GraphicsQuality.high.name),
-    );
+    graphicsQuality = GraphicsQuality.values.byName(await asyncPrefs.getString('graphicsQuality') ?? GraphicsQuality.high.name);
     postProcessing = await asyncPrefs.getBool('postProcessing') ?? (graphicsQuality == GraphicsQuality.high);
 
     /// Add router
