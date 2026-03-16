@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../utils/secrets.dart';
 
 class HighscoreService {
-  static const String _baseUrl = googleSheetUrl;
+  static const String _baseUrl = "https://script.google.com/macros/s/AKfycbwY97s-JBGVqZahO_nx2K4GpZczUFjgXOB3Sj99YvdmS0_TcgFP3piHKevSWdT6s11Vnw/exec";
 
   // Envoyer le temps final (ex: 12.450 secondes)
   static Future<void> saveScore(String pseudo, double timeElapsed) async {
