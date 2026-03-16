@@ -11,7 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
-      - uses: bluefireteam/flutter-gh-pages@v8
+      - uses: bluefireteam/flutter-gh-pages@v9
         with:
           baseHref: /flame_game_jam_2026/
+          webRenderer: canvaskit
           compileToWasm: true
